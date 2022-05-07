@@ -1,0 +1,12 @@
+{
+    "extends": "@tsconfig/node17/tsconfig.json",
+    "ts-node": {
+        "transpileOnly": false,
+        "files": true,
+        "include": ["src/*"],
+        "compilerOptions": {
+            "baseUrl": ".",
+            "outFile": "build/bundle.js"
+        }
+    }
+}
