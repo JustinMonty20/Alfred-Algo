@@ -1,17 +1,22 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { REST } from "@discordjs/rest";
 import { Routes } from "discord-api-types/v9";
+import fs from "fs";
 
 import { discordConfig } from "../config";
 const {appId, guildId, token} = discordConfig;
 
-const commands = [
-    new SlashCommandBuilder().setName('test').setDescription('test command description'),
-]
-.map(cmd => cmd.toJSON());
+const commands = []
+const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.ts'));
 
-const rest = new REST({version: "9"}).setToken(token!);
-rest.put(Routes.applicationGuildCommands(appId!, guildId!), {body: commands})
-.then(() => console.log("Successfully registered commands"))
-.catch(console.error)
+for (const file of commandFiles) {
+	const command = require(`./commands/${file}`);
+    console.log(command);
+	commands.push(command.default.data.toJSON());
+}
 
+const rest = new REST({ version: '9' }).setToken(token!);
+
+rest.put(Routes.applicationGuildCommands(appId!, guildId!), { body: commands })
+	.then(() => console.log('Successfully registered application commands.'))
+	.catch(console.error);
