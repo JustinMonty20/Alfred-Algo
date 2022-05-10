@@ -1,11 +1,14 @@
 /**
  * TODO: Set up implementation with discord.js for AlgoBot
  */
-import {Client, Intents} from "discord.js";
-import {config} from "dotenv";
-config();
+import { Client, Intents} from "discord.js";
+import config from "../config"; 
 
-const token = process.env.BOT_TOKEN;
+const client = new Client({intents: Intents.FLAGS.GUILDS});
+const { token } = config; 
 
-console.log("test");
+client.once("ready", () => {
+    console.log("Ready...");
+})
 
+client.login(token);
