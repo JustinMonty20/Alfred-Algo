@@ -13,11 +13,8 @@ const collection = new Collection();
 
 const commandFiles = fs.readdirSync("./commands").filter(file => file.endsWith(".ts"));
 
-console.log(commandFiles);
-
 for(const file of commandFiles) {
     const command = require(`./commands/${file}`);
-    console.log(command);
     collection.set(command.default.data.name, command);
 }
 
