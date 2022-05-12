@@ -1,37 +1,30 @@
-import { Client, Collection, Intents} from "discord.js";
-import { discordConfig } from "../config";
-import fs from "fs";
+import {SlashCreator, GatewayServer} from "slash-create";
+import path from "path";
+import * as Discord from "discord.js";
 
-const client = new Client({intents: [Intents.FLAGS.GUILDS]});
-const { token } = discordConfig; 
+import { discordConfig } from "../config";
+
+const client = new Discord.Client({intents: [Discord.Intents.FLAGS.GUILDS]});
+const creator = new SlashCreator({
+    applicationID: discordConfig.appId || "appId",
+    publicKey:  discordConfig.pubKey || "pubKey",
+    token: discordConfig.token || "token",
+    client
+})
+
+creator
+    .withServer(
+        new GatewayServer(
+            (handler) => client.ws.on("INTERACTION_CREATE", handler)
+        )
+    )
+    .registerCommandsIn(path.join(__dirname, "commands"), [".ts"])
+    .syncCommands()
 
 client.once("ready", () => {
     console.log("Ready...");
 })
 
-const collection = new Collection();
+console.log(creator.commands)
 
-const commandFiles = fs.readdirSync("./commands").filter(file => file.endsWith(".ts"));
-
-for(const file of commandFiles) {
-    const command = require(`./commands/${file}`);
-    collection.set(command.default.data.name, command);
-}
-
-client.on("interactionCreate", async interaction => {
-    //  for some reason default is before all the information that we need in these objects. 
-    if(!interaction.isCommand()) return;
-
-    const command:any = collection.get(interaction.commandName);
-
-    if(!command) return;
-
-    try {
-        await command.default.execute(interaction);
-    } catch(err) {
-        console.error(err);
-        await interaction.reply({content: `There was an error while exeucting command with a name of ${interaction.commandName}`, ephemeral: true});
-    }
-})
-
-client.login(token);
+client.login(discordConfig.token);
