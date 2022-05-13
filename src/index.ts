@@ -28,7 +28,4 @@ client.once("ready", () => {
 })
 
 
-
-console.log(creator.commands)
-
 client.login(discordConfig.token);
