@@ -1,3 +1,4 @@
+// IMPORTANT: SET GUILD ID's for commands
 import {SlashCreator, GatewayServer} from "slash-create";
 import path from "path";
 import * as Discord from "discord.js";
@@ -12,6 +13,7 @@ const creator = new SlashCreator({
     client
 })
 
+// TODO: Update implementation of bot to use AWS Lambda Server
 creator
     .withServer(
         new GatewayServer(
@@ -24,6 +26,8 @@ creator
 client.once("ready", () => {
     console.log("Ready...");
 })
+
+
 
 console.log(creator.commands)
 

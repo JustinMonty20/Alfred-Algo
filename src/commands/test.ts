@@ -1,7 +1,9 @@
 import { SlashCommand, SlashCreator, CommandContext } from "slash-create";
+import {discordConfig } from "../../config";
 class TestCommand extends SlashCommand {
     constructor(creator: SlashCreator) {
         super(creator, {
+            guildIDs: [discordConfig.guildId!],
             name: "test",
             description: "A test command with slash-create package",
             deferEphemeral: true,
@@ -11,8 +13,7 @@ class TestCommand extends SlashCommand {
     }
 
     async run(ctx:CommandContext) {
-        console.log(ctx);
-        return "TESTING, TESTING 123...";
+        ctx.send("TESTING, TESTING 123...", {ephemeral: true});
     }
 }
 
